@@ -1,0 +1,22 @@
+{
+  "name": "goit-js-hw-12-countries",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Country search application built with JavaScript, Parcel, PNotify and REST Countries API.",
+  "homepage": "https://diserd.github.io/goit-js-hw-12-countries/",
+  "scripts": {
+    "start": "parcel src/index.html",
+    "build": "parcel build src/index.html --public-url /goit-js-hw-12-countries/",
+    "format": "prettier --write \"src/**/*.{html,css,js}\" *.json *.md"
+  },
+  "dependencies": {
+    "@pnotify/core": "^5.2.0",
+    "lodash.debounce": "^4.0.8",
+    "modern-normalize": "^3.0.1"
+  },
+  "devDependencies": {
+    "parcel": "^2.15.4",
+    "prettier": "^3.5.3"
+  },
+  "browserslist": "> 0.5%, last 2 versions, not dead"
+}
