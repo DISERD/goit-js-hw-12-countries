@@ -1,8 +1,8 @@
+
 import debounce from 'lodash.debounce';
 import { error, info } from '@pnotify/core';
 import '@pnotify/core/dist/PNotify.css';
 import '@pnotify/core/dist/BrightTheme.css';
-import 'modern-normalize/modern-normalize.css';
 import fetchCountries from './fetchCountries';
 
 const searchInput = document.querySelector('.search-input');
@@ -12,6 +12,7 @@ const countryInfo = document.querySelector('.country-info');
 const DEBOUNCE_DELAY = 500;
 
 let requestId = 0;
+let currentCountries = [];
 
 function showError(message) {
   error({
@@ -20,14 +21,32 @@ function showError(message) {
   });
 }
 
+const debouncedSearch = debounce(onInputChange, DEBOUNCE_DELAY);
+
 searchInput.addEventListener('input', () => {
   requestId++;
+  currentCountries = [];
+
   countryList.innerHTML = '';
   countryInfo.innerHTML = '';
+
   debouncedSearch();
 });
 
-const debouncedSearch = debounce(onInputChange, DEBOUNCE_DELAY);
+// Вибір країни зі списку
+countryList.addEventListener('click', event => {
+  const button = event.target.closest('.country-button');
+
+  if (!button) {
+    return;
+  }
+
+  const selectedCountry = currentCountries[Number(button.dataset.index)];
+
+  if (selectedCountry) {
+    renderCountryInfo(selectedCountry);
+  }
+});
 
 async function onInputChange() {
   const searchQuery = searchInput.value.trim();
@@ -58,33 +77,41 @@ async function onInputChange() {
       return;
     }
 
-    if (countries.length === 1) {
-      renderCountryInfo(countries[0]);
-    } else {
-      renderCountryList(countries);
-    }
+    // Зберігаємо знайдені країни
+    currentCountries = countries;
+
+    // Завжди показуємо список, навіть якщо країна одна
+    renderCountryList(countries);
+
   } catch (err) {
     if (currentRequestId !== requestId) {
       return;
     }
 
-    console.error('Country search error:', err);
-    showError('Unable to load countries. Please check your API key and access.');
+    console.error(err);
+    showError('Unable to load countries. Please check API access.');
   }
 }
 
 function renderCountryList(countries) {
   const markup = countries
-    .map(country => {
+    .map((country, index) => {
       const name = country.names?.common || 'Unknown country';
+
       const flag = country.flag?.url_svg
-        ? `<img src="${country.flag.url_svg}" alt="${country.flag.description || name}" width="30" />`
-        : country.flag?.emoji || '🏳️';
+        ? `<img src="${country.flag.url_svg}" alt="${name}" width="30">`
+        : `<span>${country.flag?.emoji || '🏳️'}</span>`;
 
       return `
         <li class="country-item">
-          ${flag}
-          <span>${name}</span>
+          <button
+            class="country-button"
+            type="button"
+            data-index="${index}"
+          >
+            ${flag}
+            <span>${name}</span>
+          </button>
         </li>
       `;
     })
@@ -95,8 +122,10 @@ function renderCountryList(countries) {
 
 function renderCountryInfo(country) {
   const name = country.names?.common || 'Unknown country';
+
   const flag = country.flag?.url_svg
-    ? `<img src="${country.flag.url_svg}" alt="${country.flag.description || name}" width="40" style="vertical-align: middle; margin-right: 10px;" />`
+    ? `<img src="${country.flag.url_svg}" alt="${name}" width="40"
+        style="vertical-align: middle; margin-right: 10px;" />`
     : country.flag?.emoji || '🏳️';
 
   const languages = country.languages
