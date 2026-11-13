@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="uk">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="description" content="Search for countries and view their capitals, population, languages and flags." />
+    <title>Search Countries</title>
+    <link rel="stylesheet" href="./css/styles.css" />
+  </head>
+
+  <body>
+    <main class="container">
+      <h1 class="page-title">Search Countries</h1>
+
+      <label class="visually-hidden" for="country-search">Enter country name</label>
+      <input
+        id="country-search"
+        type="text"
+        class="search-input"
+        placeholder="Enter country name..."
+        autocomplete="off"
+      />
+
+      <ul class="country-list"></ul>
+      <div class="country-info"></div>
+    </main>
+
+    <script type="module" src="./js/index.js"></script>
+  </body>
+</html>
